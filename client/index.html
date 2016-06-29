@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Simple chat app</title>
+  </head>
+  <body>
+    <form action="">
+      <span id="name"></span>
+      <br />
+      <input id="msg" autocomplete="off" /><button>Send</button>
+    </form>
+    <ul id="messages"></ul>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+        // open connection
+        var socket = new WebSocket("ws://127.0.0.1:5555");
+        var name = "USER" + Math.random();
+
+        socket.onopen = function () {
+          socket.send(name + ": connected"); 
+        };
+
+        // Log errors
+        socket.onerror = function (error) {
+          console.log(error);
+          console.log('WebSocket Error ' + error);
+        };
+
+        // Log messages from the server
+        socket.onmessage = function (e) {
+          $("#messages").append( "<li>" + e.data + "</li>");
+          console.log('Server: ' + e.data);
+        };
+
+        socket.onclose = function() {
+           socket.send(name + ": closed"); 
+          console.log("closing");
+        };
+
+        $('form').submit(function(){
+          socket.send(name + " wrote: " + $('#msg').val());
+          $('#msg').val(''); // clear input
+          return false;
+        });
+
+        $("#name").text("Your name: " + name); // show current tab name
+
+    </script>
+  </body>
+</html>
