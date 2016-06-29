@@ -1,50 +1,92 @@
 <!doctype html>
 <html>
-  <head>
-    <title>Simple chat app</title>
-  </head>
-  <body>
-    <form action="">
-      <span id="name"></span>
-      <br />
-      <input id="msg" autocomplete="off" /><button>Send</button>
-    </form>
-    <ul id="messages"></ul>
-    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
-    <script>
-        // open connection
-        var socket = new WebSocket("ws://127.0.0.1:5555");
-        var name = "USER" + Math.random();
+	<head>
+		<title>Simple chat app</title>
+		<style>
+			label {
+				color: #B4886B;
+				font-weight: bold;
+				display: block;
+				width: 5em;
+				float: left;
+			}
+			label:after { 
+				content: ": " 
+			}
+			li {
+				font-weight: bold;
+			}
+			li.info {
+				font-style: italic;
+				font-weight: normal;
+			}
+	</style>
+	</head>
+	<body>
+		<form action="">
+			<label for="user">User</label>
+			<input id="user" autocomplete="off" name="user" />
+			<br />
+			<label for="msg">Message</label>
+			<input id="msg" autocomplete="off" name="msg" /><button>Send</button>
+		</form>
+	<ul id="messages"></ul>
+		<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+		<script>
+			/*globals $:false,JSON:false */
+			function sendMessage(socket, message, type) {
+				type || (type = "message");
 
-        socket.onopen = function () {
-          socket.send(name + ": connected"); 
-        };
+				var str = JSON.stringify({
+					user : $('#user').val() || "anonymous",
+					message : message,
+					type : type
+				});                   
+				socket.send(str);
+			}
 
-        // Log errors
-        socket.onerror = function (error) {
-          console.log(error);
-          console.log('WebSocket Error ' + error);
-        };
+			// open connection
+			var socket = new WebSocket("ws://127.0.0.1:5555");
 
-        // Log messages from the server
-        socket.onmessage = function (e) {
-          $("#messages").append( "<li>" + e.data + "</li>");
-          console.log('Server: ' + e.data);
-        };
+			socket.onopen = function () {
+				sendMessage(socket, null, "open");
+			};
 
-        socket.onclose = function() {
-           socket.send(name + ": closed"); 
-          console.log("closing");
-        };
+			// Log errors
+			socket.onerror = function (error) {
+				console.log(error);
+				console.log('WebSocket Error ' + error);
+			};
 
-        $('form').submit(function(){
-          socket.send(name + " wrote: " + $('#msg').val());
-          $('#msg').val(''); // clear input
-          return false;
-        });
+			// Log messages from the server
+			socket.onmessage = function (e) {
+				var data = JSON.parse(e.data);
+				$("#messages").append( "<li class='" + (data.style || "") + "''>" + data.message + "</li>");
+				console.log('Server: ' + e.data);
+			};
 
-        $("#name").text("Your name: " + name); // show current tab name
+			socket.onclose = function() {
+				sendMessage(socket, null, "close");
+			};
 
-    </script>
-  </body>
+			$('form').submit(function(){
+				sendMessage(socket, $('#msg').val());
+				$('#msg').val(''); // clear input
+				return false;
+			});
+
+			$('form').change(function(evt) {
+				var target = evt.target;
+				
+				switch (target.id) {
+					case "user" : 
+						sendMessage(socket, null, "rename");
+						break;
+					case "msg" :
+						sendMessage(socket, null, "typing");
+						break;	
+				}
+			});
+		</script>
+	</body>
 </html>
