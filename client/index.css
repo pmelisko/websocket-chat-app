@@ -1,0 +1,17 @@
+label {
+    color: #B4886B;
+    font-weight: bold;
+    display: block;
+    width: 5em;
+    float: left;
+}
+label:after { 
+    content: ": " 
+}
+li {
+    font-weight: bold;
+}
+li.info {
+    font-style: italic;
+    font-weight: normal;
+}

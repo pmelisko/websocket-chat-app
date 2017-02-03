@@ -1,12 +1,11 @@
 /*globals __dirname:false,JSON:false */
 
 // web part
-var app = require('express')();
+var express = require('express');
+var app = express();
 var http = require('http').Server(app);
 
-app.get('/', function(req, res){
-	res.sendFile(__dirname + '/client/index.html');
-});
+app.use(express.static('client'));
 
 http.listen(3000, function(){
 	console.log('http server listening on *:3000');
@@ -14,7 +13,7 @@ http.listen(3000, function(){
 });
 
 // socket part
-var PORT = 5555;
+var PORT = 5000;
 var ws = require("nodejs-websocket");
 var connections = [];
 
@@ -47,6 +46,9 @@ ws.createServer(function (conn) {
 		}
 
 		message && broadcast(message, style);
+	});
+	conn.on("error", function() {
+		console.log(arguments);
 	});
 	conn.on("close", function (/*code, reason*/) {
 		var idx = connections.indexOf(conn);
