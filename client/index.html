@@ -4,19 +4,36 @@
 		<title>Simple chat app</title>
 		<link rel="stylesheet" type="text/css" href="index.css">
 
+		<script src="https://unpkg.com/vue/dist/vue.js"></script>
 		<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
 		
 	</head>
 	<body>
-		<form id="socketForm">
+		<div id="app">
+			<div>
+				<label for="online">Online</label>
+				<input
+					id="online"
+	  				type="checkbox"
+	  				v-bind:checked="isOnline"
+	  				disabled="true"
+	 			>
+ 			</div>
 			<label for="user">User</label>
-			<input id="user" autocomplete="off" name="user" />
-			<br />
-			<label for="msg">Message</label>
-			<input id="msg" autocomplete="off" name="msg" /><button>Send</button>
-		</form>
-		<ul id="messages"></ul>
-		
+			<input id="user" autocomplete="off" v-model="user" :disabled="isLogged" @keydown.enter=onLogin />
+			<button @click="onLogin" :disabled="isLogged || !user">Login</button>
+			<form id="socketForm" @submit.prevent="onSubmit">
+				<label for="msg">Message</label>
+				<input id="msg" autocomplete="off" v-model="message" v-bind:disabled="!isLogged" />
+				<button type="submit" v-bind:disabled="!isLogged || !message">Send</button>
+			</form>
+			<ul>
+				<li v-for="m in messages" v-bind:class="m.style" >
+	  				{{ m.message }}
+				</li>
+			</ul>
+		</div>
+
 		<script src="main.js"></script>
 	</body>
 </html>

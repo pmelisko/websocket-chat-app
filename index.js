@@ -35,10 +35,6 @@ ws.createServer(function (conn) {
 				message = data.user + " has beed disconnected";
 				style = "info";
 				break;
-			case "rename":
-				message = data.user + " renamed";
-				style = "info";
-				break;
 			case "typing":
 				message = data.user + " is typing";
 				style = "info";
