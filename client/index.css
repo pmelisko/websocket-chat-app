@@ -1,17 +1,10 @@
-label {
-    color: #B4886B;
-    font-weight: bold;
-    display: block;
-    width: 5em;
-    float: left;
-}
-label:after { 
-    content: ": " 
-}
-li {
-    font-weight: bold;
-}
-li.info {
+
+.info dd{
     font-style: italic;
     font-weight: normal;
+}
+
+.dl-horizontal dd {
+    white-space: pre-line;
+    word-break: break-all;
 }

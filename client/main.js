@@ -51,30 +51,5 @@ var app = new Vue({
 });
 
 function createSocket() {
-    var socket = new WebSocket("ws://"+window.location.hostname+":5000");
-
-    // // socket.onopen = function () {
-    // //     console.log(this);
-    // //    // this.sendMessage(this, null, "open");
-    // // };
-
-    // // Log errors
-    // socket.onerror = function (error) {
-    //     console.log(error);
-    //     console.log('WebSocket Error ' + error);
-    // };
-
-    // // Log messages from the server
-    // socket.onmessage = function (e) {
-    //     var data = JSON.parse(e.data);
-
-    //     app.messages.unshift(data);
-    //     console.log('Server: ' + e.data);
-    // };
-
-    // socket.onclose = function() {
-    //     this.sendMessage(this, null, "close");
-    // };
-
-    return socket;
+    return new WebSocket("ws://"+window.location.hostname+":5000");
 }

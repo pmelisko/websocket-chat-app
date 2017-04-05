@@ -23,25 +23,26 @@ ws.createServer(function (conn) {
 		var data = JSON.parse(str);
 
 		var message, style;
+		var user = data.user;
 		switch (data.type) {
 			case "open":
-				message = data.user + " has been connected";
+				message = "has been connected";
 				style = "info";
 				break;
 			case "message":
-				message = data.user + ": " + data.message;
+				message = data.message;
 				break;
 			case "close":
-				message = data.user + " has beed disconnected";
+				message =  "has beed disconnected";
 				style = "info";
 				break;
 			case "typing":
-				message = data.user + " is typing";
+				message = "is typing";
 				style = "info";
 				break;
 		}
 
-		message && broadcast(message, style);
+		message && broadcast(user, message, style);
 	});
 	conn.on("error", function() {
 		console.log(arguments);
@@ -55,10 +56,11 @@ ws.createServer(function (conn) {
 }).listen(PORT);
 console.log('websocket server listening on ' + PORT);
 
-function broadcast(message, style) {
+function broadcast(user, message, style) {
 	connections.forEach(function(c) {
 		c.sendText(JSON.stringify({
 			message : message,
+			user : user,
 			style : style
 		}));
 	});
